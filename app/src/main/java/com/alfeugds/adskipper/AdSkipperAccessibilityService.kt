@@ -160,7 +160,8 @@ class AdSkipperAccessibilityService : AccessibilityService() {
                     Log.v(TAG, "skipAdButton is clickable! Trying to click it...")
                     skipAdButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     Log.i(TAG, "Clicked skipAdButton!")
-                } ?: Log.v(TAG, "skipAdButton is null... returning...")
+                }
+                ?: Log.v(TAG, "skipAdButton is null... returning...")
         } catch (error: Exception) {
             Log.e(TAG, "Something went wrong...", error)
         }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ad Skipper</string>
+    <string name="ad_skipper_header">Habilitar servicio en segundo plano</string>
+    <string name="ad_skipper_enabled_title">Habilitar saltar anuncios</string>
+    <string name="ad_skipper_enabled_on">Habilitar saltar anuncios automáticamente</string>
+    <string name="ad_skipper_enabled_off">No saltar anuncios automáticamente</string>
+    <string name="accessibility_service_label">Saltar anuncios</string>
+    <string name="accessibility_service_description">Este servicio salta los anuncios y silencia el dispositivo meintras un anuncio se reproduce. Es una manera no intrusiva de eliminar (parcialmente) los anuncios mientras se reproduce un video</string>
+    <string name="mute_ad_enabled_title">Silenciar anuncios</string>
+    <string name="mute_ad_enabled_on">El dispositivo se silenciará mientras se reproduce el anuncio</string>
+    <string name="mute_ad_enabled_off">El dispositivo no se silenciará mientras se reproduce el anuncio</string>
+    <string name="dialog_ok">Ok</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_open_accessibility_settings_title">¡Atención!</string>
+    <string name="dialog_open_accessibility_settings_message">Sigue las intrucciones cuidadosamente, de lo contrario la app no silenciará los anuncios de Youtube.\n\nAl hacer tap en OK se mostrará la configuración de accesibilidad.\nBusca y activa el servicio \'Saltar anuncios\'.\n\nSi la app dejó de funcionar correctamente intenta forzar el cierre de la aplicación y activar el servicio nuevamente.\nSi eso no funnciona intenta reinstalando la applicación. Disculpa el inconveniente</string>
+</resources>

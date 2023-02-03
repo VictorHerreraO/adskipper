@@ -1,16 +1,15 @@
 package com.alfeugds.adskipper
 
 import android.accessibilityservice.AccessibilityService
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.media.AudioManager
 import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import com.alfeugds.adskipper.binding.AccessibilityBinding
+import com.alfeugds.adskipper.delegate.AudioManagerDelegate
 
 
 private const val TAG = "AdSkipperService"
@@ -20,15 +19,14 @@ class AdSkipperAccessibilityService : AccessibilityService() {
     private var _binding: AccessibilityBinding? = null
     private val binding: AccessibilityBinding get() = _binding!!
 
-    private var isMuted = false
     var isRunning = false
 
     private lateinit var prefs: SharedPreferences
-    private lateinit var audioManager: AudioManager
+    private lateinit var audioManager: AudioManagerDelegate
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "onCreate fired")
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager = AudioManagerDelegate(this, ::isMuteAdEnabled)
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         _binding = AccessibilityBinding(this)
     }
@@ -92,46 +90,6 @@ class AdSkipperAccessibilityService : AccessibilityService() {
         return prefs.getBoolean(SETTINGS_MUTE_AUDIO, true)
     }
 
-    private fun muteMedia() {
-        if (isMuted) {
-            return
-        }
-
-        if (!isMuteAdEnabled()) {
-            return
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0)
-        }else {
-            @Suppress("DEPRECATION")
-            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true)
-        }
-
-        Log.i(TAG, "STREAM_MUSIC muted.")
-        isMuted = true
-    }
-
-    private fun unmuteMedia() {
-        if (!isMuted) {
-            return
-        }
-
-        if (!isMuteAdEnabled()) {
-            return
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0)
-        }else{
-            @Suppress("DEPRECATION")
-            audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false)
-        }
-
-        Log.i(TAG, "STREAM_MUSIC unmuted.")
-        isMuted = false
-    }
-
     fun disable(){
         Log.i(TAG, "Disabling service with stopSelf")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -146,13 +104,13 @@ class AdSkipperAccessibilityService : AccessibilityService() {
         }
         try {
             if (binding.hasNoBindings) {
-                unmuteMedia()
+                audioManager.unMuteMedia()
                 Log.v(TAG, "No ads yet...")
                 return
             }
             Log.i(TAG, "player_learn_more_button or skipAdButton or adProgressText are visible. Trying to skip ad...")
 
-            muteMedia()
+            audioManager.muteMedia()
 
             binding.skipAdButton
                 ?.takeIf { it.isClickable }

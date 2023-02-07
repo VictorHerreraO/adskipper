@@ -22,6 +22,7 @@ class AdSkipperAccessibilityService : AccessibilityService() {
 
     private lateinit var audioManager: AudioManagerDelegate
     private lateinit var prefsManager: PreferenceManagerDelegate
+
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "onCreate fired")
@@ -30,11 +31,6 @@ class AdSkipperAccessibilityService : AccessibilityService() {
             prefsManager.isMuteAdEnabled
         }
         _binding = AccessibilityBinding(this)
-    }
-
-    override fun onRebind(intent: Intent?) {
-        super.onRebind(intent)
-        Log.i(TAG, "onRebind fired")
     }
 
     override fun onServiceConnected() {
@@ -61,17 +57,7 @@ class AdSkipperAccessibilityService : AccessibilityService() {
         isRunning = false
     }
 
-    override fun onUnbind(intent: Intent?): Boolean {
-        Log.i(TAG, "onUnbind called. " + intent?.dataString)
-        return super.onUnbind(intent)
-    }
-
-    override fun onLowMemory() {
-        Log.w(TAG, "onLowMemory")
-        super.onLowMemory()
-    }
-
-    fun disable(){
+    private fun disable() {
         Log.i(TAG, "Disabling service with stopSelf")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             stopSelf()
@@ -89,7 +75,10 @@ class AdSkipperAccessibilityService : AccessibilityService() {
                 Log.v(TAG, "No ads yet...")
                 return
             }
-            Log.i(TAG, "player_learn_more_button or skipAdButton or adProgressText are visible. Trying to skip ad...")
+            Log.i(
+                TAG,
+                "player_learn_more_button or skipAdButton or adProgressText are visible. Trying to skip ad..."
+            )
 
             audioManager.muteMedia()
 

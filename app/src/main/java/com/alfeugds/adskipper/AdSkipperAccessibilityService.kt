@@ -37,17 +37,9 @@ class AdSkipperAccessibilityService : AccessibilityService() {
         Log.i(TAG, "onRebind fired")
     }
 
-    companion object {
-        private var instance: AdSkipperAccessibilityService? = null
-
-        @JvmStatic
-        fun getInstance (): AdSkipperAccessibilityService? = instance
-    }
-
     override fun onServiceConnected() {
         Log.v(TAG, "accessibility onServiceConnected(). Ad skipping service connected.")
         isRunning = true
-        instance = this
         super.onServiceConnected()
     }
 
@@ -71,7 +63,6 @@ class AdSkipperAccessibilityService : AccessibilityService() {
 
     override fun onUnbind(intent: Intent?): Boolean {
         Log.i(TAG, "onUnbind called. " + intent?.dataString)
-        instance = null
         return super.onUnbind(intent)
     }
 

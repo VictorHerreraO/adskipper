@@ -25,14 +25,15 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.settings_activity)
         if (savedInstanceState == null) {
             supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settings, SettingsFragment())
-                    .commit()
+                .beginTransaction()
+                .replace(R.id.settings, SettingsFragment())
+                .commit()
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
-    class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+    class SettingsFragment : PreferenceFragmentCompat(),
+        SharedPreferences.OnSharedPreferenceChangeListener {
         private val LOG_TAG = "SettingsActivity"
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -51,18 +52,25 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun setEnableServiceSetting(value: Boolean) {
-            val enableService: SwitchPreferenceCompat? = findPreference(PreferenceKey.SETTINGS_ENABLE_SERVICE)
+            val enableService: SwitchPreferenceCompat? =
+                findPreference(PreferenceKey.SETTINGS_ENABLE_SERVICE)
             enableService?.isChecked = value
         }
 
         private fun setMuteAudioSetting(value: Boolean) {
-            val muteAudio: SwitchPreferenceCompat? = findPreference(PreferenceKey.SETTINGS_MUTE_AUDIO)
+            val muteAudio: SwitchPreferenceCompat? =
+                findPreference(PreferenceKey.SETTINGS_MUTE_AUDIO)
             muteAudio?.isChecked = value
         }
 
-        private fun isAccessibilityServiceEnabled(context: Context?, service: Class<out AccessibilityService?>): Boolean {
-            val am = context?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-            val enabledServices = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+        private fun isAccessibilityServiceEnabled(
+            context: Context?,
+            service: Class<out AccessibilityService?>
+        ): Boolean {
+            val am =
+                context?.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+            val enabledServices =
+                am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
             for (enabledService in enabledServices) {
                 val enabledServiceInfo: ServiceInfo = enabledService.resolveInfo.serviceInfo
                 if (enabledServiceInfo.packageName == context.packageName && enabledServiceInfo.name == service.name)
@@ -71,12 +79,13 @@ class SettingsActivity : AppCompatActivity() {
             return false
         }
 
-        private val service: AdSkipperAccessibilityService? get() {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                return null
+        private val service: AdSkipperAccessibilityService?
+            get() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    return null
+                }
+                return AdSkipperAccessibilityService.getInstance()
             }
-            return AdSkipperAccessibilityService.getInstance()
-        }
 
         private fun enableAccessibilityService() {
             Log.i(LOG_TAG, "service enabled = " + service?.isRunning)
@@ -85,14 +94,15 @@ class SettingsActivity : AppCompatActivity() {
                 Log.e(LOG_TAG, "Could not create alert dialog, builder is null.")
                 return
             }
-            if(isYoutubeServiceEnabled()){
+            if (isYoutubeServiceEnabled()) {
                 Log.i(LOG_TAG, "service enabled.")
                 return
             }
             try {
                 builder.apply {
                     setCancelable(false)
-                    setPositiveButton(R.string.dialog_ok
+                    setPositiveButton(
+                        R.string.dialog_ok
                     ) { _, _ ->
                         // User clicked OK button
                         setEnableServiceSetting(true)
@@ -100,7 +110,8 @@ class SettingsActivity : AppCompatActivity() {
                         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                         startActivityForResult(intent, 0)
                     }
-                    setNegativeButton(R.string.dialog_cancel
+                    setNegativeButton(
+                        R.string.dialog_cancel
                     ) { _, _ ->
                         // User cancelled the dialog
                         Log.i(LOG_TAG, "User cancelled action to open accessibility settings.")
@@ -135,10 +146,14 @@ class SettingsActivity : AppCompatActivity() {
         }
 
 
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        override fun onSharedPreferenceChanged(
+            sharedPreferences: SharedPreferences?,
+            key: String?
+        ) {
             Log.v(LOG_TAG, "onSharedPreferenceChanged()...")
 
-            val isServiceEnabled = isAccessibilityServiceEnabled(context, AdSkipperAccessibilityService::class.java)
+            val isServiceEnabled =
+                isAccessibilityServiceEnabled(context, AdSkipperAccessibilityService::class.java)
             Log.v(LOG_TAG, "isAccessibilityServiceEnabled(): $isServiceEnabled")
 
             val setting: Boolean? = sharedPreferences?.getBoolean(key, false) ?: return
@@ -149,7 +164,7 @@ class SettingsActivity : AppCompatActivity() {
                 PreferenceKey.SETTINGS_ENABLE_SERVICE -> {
                     if (setting == true && !isServiceEnabled) {
                         //enableAccessibilityService()
-                        Log.v(LOG_TAG,"Service is not enabled.")
+                        Log.v(LOG_TAG, "Service is not enabled.")
                     }
                 }
             }

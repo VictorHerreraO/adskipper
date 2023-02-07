@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import com.alfeugds.adskipper.delegate.PreferenceKey
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -50,12 +51,12 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun setEnableServiceSetting(value: Boolean) {
-            val enableService: SwitchPreferenceCompat? = findPreference(SETTINGS_ENABLE_SERVICE)
+            val enableService: SwitchPreferenceCompat? = findPreference(PreferenceKey.SETTINGS_ENABLE_SERVICE)
             enableService?.isChecked = value
         }
 
         private fun setMuteAudioSetting(value: Boolean) {
-            val muteAudio: SwitchPreferenceCompat? = findPreference(SETTINGS_MUTE_AUDIO)
+            val muteAudio: SwitchPreferenceCompat? = findPreference(PreferenceKey.SETTINGS_MUTE_AUDIO)
             muteAudio?.isChecked = value
         }
 
@@ -145,7 +146,7 @@ class SettingsActivity : AppCompatActivity() {
             Log.v(LOG_TAG, "setting key: $key, enabled: $setting")
 
             when (key) {
-                SETTINGS_ENABLE_SERVICE -> {
+                PreferenceKey.SETTINGS_ENABLE_SERVICE -> {
                     if (setting == true && !isServiceEnabled) {
                         //enableAccessibilityService()
                         Log.v(LOG_TAG,"Service is not enabled.")

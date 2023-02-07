@@ -2,14 +2,13 @@ package com.alfeugds.adskipper
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import androidx.preference.PreferenceManager
 import com.alfeugds.adskipper.binding.AccessibilityBinding
 import com.alfeugds.adskipper.delegate.AudioManagerDelegate
+import com.alfeugds.adskipper.delegate.PreferenceManagerDelegate
 
 
 private const val TAG = "AdSkipperService"
@@ -21,20 +20,21 @@ class AdSkipperAccessibilityService : AccessibilityService() {
 
     var isRunning = false
 
-    private lateinit var prefs: SharedPreferences
     private lateinit var audioManager: AudioManagerDelegate
+    private lateinit var prefsManager: PreferenceManagerDelegate
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "onCreate fired")
-        audioManager = AudioManagerDelegate(this, ::isMuteAdEnabled)
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        prefsManager = PreferenceManagerDelegate(this)
+        audioManager = AudioManagerDelegate(this) {
+            prefsManager.isMuteAdEnabled
+        }
         _binding = AccessibilityBinding(this)
     }
 
     override fun onRebind(intent: Intent?) {
         super.onRebind(intent)
         Log.i(TAG, "onRebind fired")
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     companion object {
@@ -80,16 +80,6 @@ class AdSkipperAccessibilityService : AccessibilityService() {
         super.onLowMemory()
     }
 
-    private fun isServiceEnabled(): Boolean {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        return prefs.getBoolean(SETTINGS_ENABLE_SERVICE, true)
-    }
-
-    private fun isMuteAdEnabled(): Boolean {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        return prefs.getBoolean(SETTINGS_MUTE_AUDIO, true)
-    }
-
     fun disable(){
         Log.i(TAG, "Disabling service with stopSelf")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -98,7 +88,7 @@ class AdSkipperAccessibilityService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (!isServiceEnabled()) {
+        if (!prefsManager.isServiceEnabled) {
             Log.i(TAG, "Service is not supposed to be enabled.")
             return
         }
@@ -114,9 +104,9 @@ class AdSkipperAccessibilityService : AccessibilityService() {
 
             binding.skipAdButton
                 ?.takeIf { it.isClickable }
-                ?.let { skipAdButton ->
+                ?.run {
                     Log.v(TAG, "skipAdButton is clickable! Trying to click it...")
-                    skipAdButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     Log.i(TAG, "Clicked skipAdButton!")
                 }
                 ?: Log.v(TAG, "skipAdButton is null... returning...")

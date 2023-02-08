@@ -18,8 +18,6 @@ class AdSkipperAccessibilityService : AccessibilityService() {
     private var _binding: AccessibilityBinding? = null
     private val binding: AccessibilityBinding get() = _binding!!
 
-    var isRunning = false
-
     private lateinit var audioManager: AudioManagerDelegate
     private lateinit var prefsManager: PreferenceManagerDelegate
 
@@ -33,12 +31,6 @@ class AdSkipperAccessibilityService : AccessibilityService() {
         _binding = AccessibilityBinding(this)
     }
 
-    override fun onServiceConnected() {
-        Log.v(TAG, "accessibility onServiceConnected(). Ad skipping service connected.")
-        isRunning = true
-        super.onServiceConnected()
-    }
-
     override fun onTaskRemoved(rootIntent: Intent?) {
         Log.i(TAG, "onTaskRemoved fired")
         disable()
@@ -47,14 +39,12 @@ class AdSkipperAccessibilityService : AccessibilityService() {
 
     override fun onDestroy() {
         Log.v(TAG, "onDestroy fired")
-        isRunning = false
         _binding = null
         super.onDestroy()
     }
 
     override fun onInterrupt() {
         Log.v(TAG, "onInterrupt fired")
-        isRunning = false
     }
 
     private fun disable() {

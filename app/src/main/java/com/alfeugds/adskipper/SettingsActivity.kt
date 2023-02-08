@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +12,6 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.alfeugds.adskipper.delegate.PreferenceKey
 
-
-private const val TAG = "SettingsActivity"
 private const val REQUEST_CODE_ACCESSIBILITY_SETTINGS = 0
 
 class SettingsActivity : AppCompatActivity() {
@@ -35,7 +32,7 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
-            Log.v(TAG, "onCreatePreferences()")
+            logMessage("onCreatePreferences()")
         }
 
         override fun onResume() {
@@ -51,7 +48,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun setEnableServiceSetting(value: Boolean) {
-            Log.d(TAG, "setEnableServiceSetting() called with: value = $value")
+            logMessage("setEnableServiceSetting() called with: value = $value")
             findPreference<SwitchPreferenceCompat>(PreferenceKey.SETTINGS_ENABLE_SERVICE)
                 ?.apply {
                     isChecked = value
@@ -59,7 +56,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun setMuteAudioSetting(value: Boolean) {
-            Log.d(TAG, "setMuteAudioSetting() called with: value = $value")
+            logMessage("setMuteAudioSetting() called with: value = $value")
             findPreference<SwitchPreferenceCompat>(PreferenceKey.SETTINGS_MUTE_AUDIO)
                 ?.apply {
                     isChecked = value
@@ -80,7 +77,7 @@ class SettingsActivity : AppCompatActivity() {
 
         private fun promptServiceEnableDialog() {
             if (isAccessibilityServiceEnabled()) {
-                Log.i(TAG, "service enabled.")
+                logMessage("service enabled.")
                 return
             }
             AlertDialog.Builder(requireContext())
@@ -100,7 +97,7 @@ class SettingsActivity : AppCompatActivity() {
                         R.string.dialog_cancel
                     ) { _, _ ->
                         // User cancelled the dialog
-                        Log.i(TAG, "User cancelled action to open accessibility settings.")
+                        logMessage("User cancelled action to open accessibility settings.")
                         setEnableServiceSetting(false)
                         activity?.onBackPressed()
                     }

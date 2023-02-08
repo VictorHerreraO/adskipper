@@ -4,9 +4,7 @@ import android.app.Service
 import android.content.Context
 import android.media.AudioManager
 import android.os.Build
-import android.util.Log
-
-private const val TAG = "AudioManagerDelegate"
+import com.alfeugds.adskipper.logMessage
 
 class AudioManagerDelegate(
     service: Service,
@@ -31,7 +29,7 @@ class AudioManagerDelegate(
             audioManager.setStreamMute(AudioManager.STREAM_MUSIC, true)
         }
 
-        Log.i(TAG, "STREAM_MUSIC muted.")
+        logMessage("STREAM_MUSIC muted.")
         isMuted = true
     }
 
@@ -49,7 +47,7 @@ class AudioManagerDelegate(
             audioManager.setStreamMute(AudioManager.STREAM_MUSIC, false)
         }
 
-        Log.i(TAG, "STREAM_MUSIC unmuted.")
+        logMessage("STREAM_MUSIC unmuted.")
         isMuted = false
     }
 }
